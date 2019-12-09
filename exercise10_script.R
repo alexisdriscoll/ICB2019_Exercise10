@@ -16,6 +16,7 @@ M[1] <- M0
 #simulate growth of nonmutant cells
 for (t in 1:(timesteps-1)){
   N[t+1] <- N[t] + (rN*N[t]*(1-((N[t]+M[t])/K)))
+  # simulate mutation when there are 100 cells
   if (N[t]>=100){
     N[t] <- 99
     M[t] <- 1
@@ -28,7 +29,8 @@ for (t in 1:(timesteps-1)){
 for (t in x:(timesteps-1)){
   N[t+1] <- N[t] + (rN*N[t]*(1-((N[t]+M[t])/K)))
   M[t+1] <- M[t] + (rM*M[t]*(1-((N[t]+M[t])/K)))
-  if (M[t] == M[t-1]){
+  #trial and error used to determine when equilibrium is reached
+  if (t >= 300){
     y <- t
     break
   }
@@ -44,6 +46,7 @@ library(ggplot2)
 library(reshape2)
 df<-data.frame(time=1:timesteps,nonmutant=N)
 df2<-data.frame(time=1:timesteps,mutant=M)
+#  use the melt function to get the data from wide to long format
 cells <- merge(df,df2,by="time")
 cellsMelted <- reshape2::melt(cells, id.var='time')
 ggplot(data=cellsMelted,aes(x=time,y=value,col=variable)) + 
